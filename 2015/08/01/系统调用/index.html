@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: 进程 | 雨天 &#39;s blog</title>
+  <title>系统调用 | 雨天 &#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="雨天 's blog">
-<meta property="og:url" content="http://yoursite.com/tags/进程/index.html">
+  <meta name="description" content="系统调用实现,系统调用流程.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统调用">
+<meta property="og:url" content="http://yoursite.com/2015/08/01/系统调用/index.html">
 <meta property="og:site_name" content="雨天 's blog">
-<meta property="og:description">
+<meta property="og:description" content="系统调用实现,系统调用流程.">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/10416024.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/11176139.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/37390604.jpg">
+<meta property="og:updated_time" content="2015-08-30T11:17:16.064Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="雨天 's blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="系统调用">
+<meta name="twitter:description" content="系统调用实现,系统调用流程.">
   
     <link rel="alternative" href="/atom.xml" title="雨天 &#39;s blog" type="application/atom+xml">
   
@@ -59,58 +63,72 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/08/02/进程空间/" class="archive-article-date">
-  <time datetime="2015-08-02T05:13:13.000Z" itemprop="datePublished">Aug 2</time>
+        <section id="main"><article id="post-系统调用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/01/系统调用/" class="article-date">
+  <time datetime="2015-08-01T09:24:57.000Z" itemprop="datePublished">2015-08-01</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux内核/">linux内核</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/08/02/进程空间/">进程空间</a>
+    <h1 class="article-title" itemprop="name">
+      系统调用
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/08/01/进程/" class="archive-article-date">
-  <time datetime="2015-08-01T09:25:30.000Z" itemprop="datePublished">Aug 1</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/08/01/进程/">进程</a>
-    </h1>
-  
+        <p>系统调用实现,系统调用流程.<br><a id="more"></a></p>
+<h1 id="系统调用处理函数:系统功能调用接口">系统调用处理函数:系统功能调用接口</h1><p>通知内核机制是靠软件中断实现的,通过引发一个异常来促使系统切换到内核态,执行异常处理程序,异常处理程序就是系统调用的处理程序.<br>在x86上预定义的软中断的中断号为128,80H.<br>int $0x80<br>最近增加了现在使用sysenter触发中断,陷入中断处理程序(system_call),完成功能调用.<br>通过eax寄存器存放调用的系统调用号.通过系统功能调用号,查找系统调用.<br>system_call()[系统调用处理程序]检查中断有效性通过eax寄存器.现在称为中断门表.<br>sys_call_table执行相应的系统调用.<br>参数传递:ebx ecx edx esi edi寄存器存放参数.<br>如果调用失败,查找errorno.<br>系统功能调用时检查返回值.<br>返回值,intel芯片中,放入eax寄存器中.</p>
+<h1 id="系统调用参数传递方式:">系统调用参数传递方式:</h1><p>1)通过寄存器传递<br>2)堆栈:通过指针,两个函数:copy_to_user copy_from_user更规范,但需要保证<br>     指针指向的内存区域是用户空间,而不是内核空间<br>     指针指向的内存区域为当前进程的 地址空间,而不是其他进程的空间<br>     读写权限控制.内存访问限制</p>
+<p>系统功能调用开销比较大.运转1000条左右的mov指令,涉及到切换,地址切换,指令流切换(80h指令流).windows开销会更大些.</p>
+<h1 id="系统调用流程">系统调用流程</h1><p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/10416024.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/11176139.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/37390604.jpg" alt=""></p>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/08/01/系统调用/" data-id="cidyfqnmg000s7go0t1bglkyf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux内核/">linux内核</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/系统调用/">系统调用</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/01/调度/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          调度
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/01/中断/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">中断</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
 </section>
         
           <aside id="sidebar">

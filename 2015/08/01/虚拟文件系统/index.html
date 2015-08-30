@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>虚拟文件系统 | 雨天 &#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="虚拟文件系统,实现,相关数据结构.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟文件系统">
+<meta property="og:url" content="http://yoursite.com/2015/08/01/虚拟文件系统/index.html">
+<meta property="og:site_name" content="雨天 's blog">
+<meta property="og:description" content="虚拟文件系统,实现,相关数据结构.">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/53921673.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/51402507.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/59417929.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/74563125.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52607125.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/51577967.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/19163288.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/54164531.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/24413209.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/1486438.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/31415223.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/94018960.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52285652.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/39188940.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/14206606.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/32704145.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/75638199.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/48399383.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/88670699.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/35169012.jpg">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/6002559.jpg">
+<meta property="og:updated_time" content="2015-08-30T11:49:52.258Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="虚拟文件系统">
+<meta name="twitter:description" content="虚拟文件系统,实现,相关数据结构.">
+  
+    <link rel="alternative" href="/atom.xml" title="雨天 &#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">雨天 &#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-虚拟文件系统" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/01/虚拟文件系统/" class="article-date">
+  <time datetime="2015-08-01T10:24:28.000Z" itemprop="datePublished">2015-08-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux内核/">linux内核</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      虚拟文件系统
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虚拟文件系统,实现,相关数据结构.<br><a id="more"></a></p>
+<h1 id="vfs原理">vfs原理</h1><p>调用文件系统 vfs,具体设备调用相关的驱动程序实现.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/53921673.jpg" alt=""></p>
+<p>基本原型:unix文件系统<br>文件:有名,在文件系统目录树中存放读取的字节序列.可寻址,可存放.对操作系统而言,只是有序的字节串.<br>文件通过目录组织起来.<br>目录:文件名字,文件位置,文件大小等属性.<br>inode:inode标示物理文件,或目录文件.<br>文件本身通过目录组织能目录树,目录文件也是文件,有结构的,目录项构成的文件.每个目录项,在linux中有两部分,串名和inode.<br>安装点:挂载点.</p>
+<p>文件系统含义:<br>磁盘上所有的文件信息和文件,空白磁盘块<br>操作系统核心里面,操作执行文件的软件和数据结构<br>操作文件的代码和数据结构加上被操作的树形结构文件</p>
+<h1 id="VFS对象和数据结构:">VFS对象和数据结构:</h1><p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/51402507.jpg" alt=""><br>数组项代表一个i节点,下标为i节点号,1号代表根目录,0号未用.引导块,超级块.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/59417929.jpg" alt=""></p>
+<p>1．图中两个结构之间的虚线箭头表示这两者之间仍有有若干个类似结点相连接；</p>
+<p>2． 图中阴影部分所示的进程并不是以实际的关系来表示的；</p>
+<p>3． 图中彩色线条示意的场景：三个进程分别打开同一个文件。进程1和进程2打开同一路径的文件，因此两者的打开文件对应同一个目录项；而进程3打开的是一个硬链接文件，因此对应的目录项与前两者不同；</p>
+<p>4．索引结点中i_sb_list链表是链接一个文件系统中所有inode的链表，因此相邻的inode之间均会由此链表链接；而i_list链接的是处于同一个状态的所有inode。所以，相邻inode之间并不一定链接在一起。</p>
+<p>在内存中, 每个文件都有一个dentry(目录项)和inode(索引节点)结构，dentry记录着文件名，上级目录等信息，正是它形成了我们所看到的树状结构；而有关该文件的组织和管理的信息主要存放inode里面，它记录着文件在存储介质上的位置与分布。<br>open打开的是目录项而不是真正的文件,由dentry目录项指向对应的idode.<br>dentry与inode是多对一的关系，因为有可能一个文件有好几个文件名</p>
+<p>现在inode是通过位图实现的.</p>
+<p>file_system_type:注册的文件系统由该结构体表示.支持的文件系统加入核心,初始化时,会建立一个这个类型.每个文件系统都有.<br>vfsmount结构 :安装点,哪个inode节点上,挂接的文件系统的根,超级块位置,根的i节点.</p>
+<p>与进程相关的结构体<br>file_struct:<br>fs_struct:<br>namespace:</p>
+<h2 id="超级块">超级块</h2><p>一个超级块对应一个文件系统(已经安装的文件系统类型如ext 2，此处是实际的文件系统哦，不是VFS)。之前我们已经说了文件系统用于管理这些文件的数据格式和操作之类的，系统文件有系统文件自己的文件系统，同时对于不同的磁盘分区也有可以是不同的文件系统。那么一个超级块对于一个独立的文件系统。保存文件系统的类型、大小、状态等等.<br>存放在特定的扇区的文件系统控制块.保存文件系统的一些信息.<br>linux系统中每个分区都是一个文件系统，都有自己的目录层次结构.<br>在超级块中保存了全局文件信息，如硬盘已用空间、数据块可用空间、inode结点信息等。一个文件系统中有哪些资源都记录在这个表中，包含i节点表和空闲块表等<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/74563125.jpg" alt=""></p>
+<p>面向对象的方法:<br>主要操作i节点.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52607125.jpg" alt=""><br>有的文件系统没有超级块,做一个虚拟的超级块.</p>
+<h2 id="inode结构和方法">inode结构和方法</h2><p>索引节点包含了内核在操作文件或目录时需要的全部信息.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/51577967.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/19163288.jpg" alt=""></p>
+<p>一个13个元素的数组0-12.存放磁盘块物理地址.一个文件使用的扇区.<br>一个文件就是一个字节序列,逻辑盘块与物理块对应.<br> 一级间址,二级间址<br>i_nlink:硬链接数,不同目录引用同一个文件.linux将文件名与属性分开.<br>一个i节点两处引用,连接数为2.link系统功能调用.ln分为软连接和硬链接.软连接找一个i节点.写入目标文件位置,软连接使用新的权限控制.</p>
+<p>struct address_space *i_mapping:内存映射相关.</p>
+<p>读i节点,写i节点,创建i节点的操作,放入超级块中.<br>对目录的操作放入i节点中了.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/54164531.jpg" alt=""><br>file结构对应进程打开的文件,i节点每个文件对应一个文件.i节点和超级块,内存的数据结构与硬盘上的i节点不一样,磁盘上的i节点内容更多,更大.但是目录项对象没有对应的磁盘的数据结构.</p>
+<h2 id="dentry结构和方法_目录项">dentry结构和方法  目录项</h2><p>目录项:目录的缓冲.组织成两种模式,原有的树形结构,同时放入hash表中.<br>目录项缓存:被使用的目录项链表,最近被使用的双向链表,散列表和相应散列函数快速将给定路径解析为相关目录项.<br>查找到文件位置,查找中读取目录文件反复读取目录结构,增加缓冲结构,目录的cache就是目录项.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/24413209.jpg" alt=""></p>
+<p>目录项的三种有效状态:<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/1486438.jpg" alt=""></p>
+<p>目录项缓存:被使用的目录项链表,最近被使用的双向链表,散列表和相应散列函数快速将给定路径解析为相关目录项.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/31415223.jpg" alt=""></p>
+<h2 id="file结构和方法">file结构和方法</h2><p>文件对象,open文件时(文件名,权限),返回fd,系统功能调用陷入核心,通过目录根据串名查找串,nameup,如果已有,从dentry中查找(cache中),找到i节点.每个i节点对应磁盘上的文件.分配一个file结构,指向i节点,file中有当前指针.当前打开的打开方式也在file结构中.task_struct中有个open_file数组32项,找到空项,然后指向file结构指针,下标为返回的fd.</p>
+<p>fork子进程时,复制表,同时指向file<br>另一个无关进程打开统一文件时,指向同一个dentry.<br>文件偏移量.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/94018960.jpg" alt=""></p>
+<p>f_pos读写的位置,lseek.</p>
+<p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52285652.jpg" alt=""><br>也是驱动程序符合的标准接口.</p>
+<p>和文件系统相关的数据结构<br> get_sb从磁盘上读取超级块,并且在文件系统被安装时,在内存中装超级块.<br>每种文件系统,不管有多少个实例安装在系统中,或者没有安装在系统中,都会有file_system_type结构.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/39188940.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/14206606.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/32704145.jpg" alt=""></p>
+<h3 id="files_struct和fs_struct">files_struct和fs_struct</h3><p>files_struct定义在linux/file.h中.该结构体由进程描述符的files域指向.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/75638199.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/48399383.jpg" alt=""></p>
+<p>close_on_exec.<br>files array</p>
+<p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/88670699.jpg" alt=""></p>
+<p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/35169012.jpg" alt=""><br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/6002559.jpg" alt=""></p>
+<h1 id="linux文件系统">linux文件系统</h1><p>盘块位图和i-node位图.盘块位图,数据区装数据的磁盘块,每一块对应一位,操作盘块位图,对应磁盘块号.i节点位图,每一位对应一个i节点,每一个下标就是对应的i节点.<br>ffs:磁盘分为几部分.每一部分分为:引导,超级块,i-node区,数据区.<br>ext2采用ffs的方法.<br>ext3更改日志,加入回滚.</p>
+<h1 id="vfs的inode和文件系统的inode">vfs的inode和文件系统的inode</h1><p>vfs中的inode不指向具体的block块.具体的文件系统的inode才会指向具体的block.<br>vfs的inode在运行时动态加载具体文件系统的inode.<br>inode中有operation函数:将会操作文件系统上的inode.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/08/01/虚拟文件系统/" data-id="cidyfqnma000l7go0yxp76lkz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux内核/">linux内核</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vfs/">vfs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/虚拟文件系统/">虚拟文件系统</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/02/进程空间/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          进程空间
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/01/进程/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">进程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux内核/">linux内核</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vfs/">vfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/中断/">中断</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统调用/">系统调用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟文件系统/">虚拟文件系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/进程/">进程</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/linux内核/" style="font-size: 20px;">linux内核</a> <a href="/tags/vfs/" style="font-size: 10px;">vfs</a> <a href="/tags/中断/" style="font-size: 10px;">中断</a> <a href="/tags/系统调用/" style="font-size: 10px;">系统调用</a> <a href="/tags/虚拟文件系统/" style="font-size: 10px;">虚拟文件系统</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a> <a href="/tags/进程/" style="font-size: 15px;">进程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/08/02/内存管理/">内存管理</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/进程空间/">进程空间</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/01/虚拟文件系统/">虚拟文件系统</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/01/进程/">进程</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/01/调度/">调度</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 conanpzh<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

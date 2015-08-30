@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/35414201.jpg">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/2715314.jpg">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/2715314.jpg">
-<meta property="og:updated_time" content="2015-08-30T11:03:10.777Z">
+<meta property="og:updated_time" content="2015-08-30T11:10:41.146Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="调度">
 <meta name="twitter:description" content="linux进程调度,用户进程,内核进程;进程抢占;进程切换">
@@ -108,34 +108,37 @@
 <h3 id="实时调度">实时调度</h3><p>两种调度策略:SCHED_FIFO和SCHED_RR<br>SCHED_FIFO简单的陷入先出的调度算法,不使用时间片.如果处于可执行状态,会 一直执行下去,直至阻塞或显示释放处理器.多个任务会轮流运行.<br>SCHED_RR和SCHED_FIFO大体相同,带时间片的SCHED_FIFO,耗尽时间片后,同一优先级的其他实时进程轮流调度,对于SCHED_FIFO,高优先级的能抢占低优先级的,低优先级的不能抢占SCHED_RR的进程,即使时间片耗尽.<br>采用的静态优先级,不计算动态优先级.<br>实时rt的运行队列则为rt_rq（内部使用优先级bitmap+双向链表组织调度实体）</p>
 <p>实时优先级:0~100;实时调度算法使用<br>SCHED_NORMAL:100~139 nice优先级-20~19.</p>
 <h3 id="O(1)调度:被废弃的调度">O(1)调度:被废弃的调度</h3><p>2.6中时间片用任务描述符中的time_slice域表示，而优先级用prio（普通进程）或者rt_priority（实时进程）表示。<br>调度器为每一个CPU维护了两个进程队列数组：active数组和expire数组。数组中的元素着保存某一优先级的进程队列指针。系统一共有140个不同的优先级，因此这两个数组大小都是140。<br>当需要选择当前最高优先级的进程时，2.6调度器不用遍历整个runqueue，而是直接从active数组中选择当前最高优先级队列中的第一个进程。假设当前所有进程中最高优先级为50(换句话说，系统中没有任何进程的优先级小于50)。则调度器直接读取active[49]，得到优先级为50的进程队列指针。该队列头上的第一个进程就是被选中的进程。这种算法的复杂度为O(1)<br>为了实现上述算法active数组维护了一个bitmap，当某个优先级别上有进程被插入列表时，相应的比特位就被置位。<br>每次时钟tick中断中，进程的时间片(time_slice)被减一。当time_slice为0时，调度器判断当前进程的类型，如果是交互式进程或者实时进程，则重置其时间片并重新插入active数组。如果不是交互式进程则从active数组中移到expired数组。这样实时进程和交互式进程就总能优先获得CPU。然而这些进程不能始终留在active数组中，否则进入expire数组的进程就会产生饥饿现象。当进程已经占用CPU时间超过一个固定值后，即使它是实时进程或者交互式进程也会被移到expire数组中。<br>当active数组中的所有进程都被移到expire数组中后，调度器交换active数组和expire数组。当进程被移入expire数组时，调度器会重置其时间片，因此新的active数组又恢复了初始情况，而expire数组为空，从而开始新的一轮调度。</p>
-<h2 id="调度总结和数据结构">调度总结和数据结构</h2><pre><code>把进程抽象成进程描述符task_struct：包含进程所必需的数据，如状态信息、调度信息、优先级信息、内存页信息等。
-把需要调度的东西抽象成调度实体sched_entity：调度实体可以是进程、进程组、用户等。这里包含负载权重值、对应红黑树结点、虚拟运行时vruntime等。
-把调度策略（算法）抽象成调度类sched_class：包含一组通用的调度操作接口，将接口和实现分离。你可以根据这组接口实现不同的调度算法，使得一个Linux调度程序可以有多个不同的调度策略。
-把调度的组织抽象成可运行队列rq：包含自旋锁、进程数量、用于公平调度的<span class="built_in">CFS</span>信息结构、当前正在运行的进程描述符等。实际的进程队列用红黑树来维护（通过<span class="built_in">CFS</span>信息结构来访问）。
-把<span class="built_in">CFS</span>调度的运行队列信息抽象成cfs_rq：包含红黑树的根结点、正在运行的进程指针、用于负载平衡的叶子队列等。
-</code></pre><p>调度实体&lt;–&gt;rq&lt;–&gt;cfs_rq –&gt;红黑树<br>                        &lt;–&gt;RT<br>调度类sched_class:具体算法的实现.<br>调度实体sched_entity：调度实体可以是进程、进程组、用户等。这里包含负载权重值、对应红黑树结点、虚拟运行时vruntime<br>把调度的组织抽象成可运行队列rq;<br>把CFS调度的运行队列信息抽象成cfs_rq</p>
-<h3 id="调度类_sched_class">调度类 sched_class</h3><p>入队,出队,yeild(自己释放自己),抢占(当前是否抢占),选择下一个适合运行进程<br>   struct sched_class {<br>            const struct sched_class <em>next;<br>            void (</em>enqueue_task) (struct rq <em>rq, struct task_struct </em>p, int wakeup); /<em>向就绪队列插入进程。</em>/<br>            void (<em>dequeue_task) (struct rq </em>rq, struct task_struct <em>p, int sleep);  /</em>将进程移除就绪队列。<em>/<br>            void (</em>yield_task) (struct rq <em>rq);                                      /</em>进程主动放弃处理器<em>/<br>            void (</em>check_preempt_curr) (struct rq <em>rq, struct task_struct </em>p);       /<em>用一个新唤醒的进程抢占当前进程</em>/<br>            struct task_struct <em> (</em>pick_next_task) (struct rq <em>rq);                  /</em>选择下一个将要运行的进程<em>/<br>            void (</em>put_prev_task) (struct rq <em>rq, struct task_struct </em>p);</p>
-<pre><code><span class="preprocessor">#<span class="keyword">ifdef</span> CONFIG_SMP                                                  <span class="comment">/*对于多处理器，支持负载平衡*/</span></span>
-        <span class="function"><span class="keyword">unsigned</span> <span class="title">long</span> <span class="params">(*load_balance)</span> <span class="params">(<span class="keyword">struct</span> rq *this_rq, <span class="keyword">int</span> this_cpu,
-                        <span class="keyword">struct</span> rq *busiest, <span class="keyword">unsigned</span> <span class="keyword">long</span> max_load_move,
-                        <span class="keyword">struct</span> sched_domain *sd, <span class="keyword">enum</span> cpu_idle_type idle,
-                        <span class="keyword">int</span> *all_pinned, <span class="keyword">int</span> *this_best_prio)</span></span>;
-        <span class="keyword">int</span> (*move_one_task) (<span class="keyword">struct</span> rq *this_rq, <span class="keyword">int</span> this_cpu,
-                              <span class="keyword">struct</span> rq *busiest, <span class="keyword">struct</span> sched_domain *sd,
-                              <span class="keyword">enum</span> cpu_idle_type idle);      
+<h2 id="调度总结和数据结构">调度总结和数据结构</h2><p>把进程抽象成进程描述符task_struct：包含进程所必需的数据，如状态信息、调度信息、优先级信息、内存页信息等。<br>把需要调度的东西抽象成调度实体sched_entity：调度实体可以是进程、进程组、用户等。这里包含负载权重值、对应红黑树结点、虚拟运行时vruntime等。<br>把调度策略（算法）抽象成调度类sched_class：包含一组通用的调度操作接口，将接口和实现分离。你可以根据这组接口实现不同的调度算法，使得一个Linux调度程序可以有多个不同的调度策略。<br>把调度的组织抽象成可运行队列rq：包含自旋锁、进程数量、用于公平调度的CFS信息结构、当前正在运行的进程描述符等。实际的进程队列用红黑树来维护（通过CFS信息结构来访问）。<br>把CFS调度的运行队列信息抽象成cfs_rq：包含红黑树的根结点、正在运行的进程指针、用于负载平衡的叶子队列等。</p>
+<p>调度实体&lt;–&gt;rq&lt;–&gt;cfs_rq –&gt;红黑树<br>                        &lt;–&gt;RT<br>调度类sched_class:具体算法的实现.<br>调度实体sched_entity：调度实体可以是进程、进程组、用户等。这里包含负载权重值、对应红黑树结点、虚拟运行时vruntime<br>把调度的组织抽象成可运行队列rq;<br>把CFS调度的运行队列信息抽象成cfs_rq</p>
+<h3 id="调度类_sched_class">调度类 sched_class</h3><p>入队,出队,yeild(自己释放自己),抢占(当前是否抢占),选择下一个适合运行进程<br>  struct sched_class {<br>    const struct sched_class <em>next;<br>    void (</em>enqueue_task) (struct rq <em>rq, struct task_struct </em>p, int wakeup); /<em>向就绪队列插入进程。</em>/<br>    void (<em>dequeue_task) (struct rq </em>rq, struct task_struct <em>p, int sleep);  /</em>将进程移除就绪队列。<em>/<br>    void (</em>yield_task) (struct rq <em>rq);                                      /</em>进程主动放弃处理器<em>/<br>    void (</em>check_preempt_curr) (struct rq <em>rq, struct task_struct </em>p);       /<em>用一个新唤醒的进程抢占当前进程</em>/<br>    struct task_struct <em> (</em>pick_next_task) (struct rq <em>rq);                  /</em>选择下一个将要运行的进程<em>/<br>    void (</em>put_prev_task) (struct rq <em>rq, struct task_struct </em>p);</p>
+<pre><code><span class="preprocessor">#<span class="keyword">ifdef</span> CONFIG_SMP     <span class="comment">/*对于多处理器，支持负载平衡*/</span></span>
+<span class="function"><span class="keyword">unsigned</span> <span class="title">long</span> <span class="params">(*load_balance)</span> <span class="params">(<span class="keyword">struct</span> rq *this_rq, <span class="keyword">int</span> this_cpu,
+<span class="keyword">struct</span> rq *busiest, <span class="keyword">unsigned</span> <span class="keyword">long</span> max_load_move,
+<span class="keyword">struct</span> sched_domain *sd, <span class="keyword">enum</span> cpu_idle_type idle,
+<span class="keyword">int</span> *all_pinned, <span class="keyword">int</span> *this_best_prio)</span></span>;
+<span class="keyword">int</span> (*move_one_task) (<span class="keyword">struct</span> rq *this_rq, <span class="keyword">int</span> this_cpu,
+<span class="keyword">struct</span> rq *busiest, <span class="keyword">struct</span> sched_domain *sd,
+<span class="keyword">enum</span> cpu_idle_type idle);      
 <span class="preprocessor">#<span class="keyword">endif</span></span>
-        <span class="keyword">void</span> (*set_curr_task) (<span class="keyword">struct</span> rq *rq);<span class="comment">//设置当前进程运行状态</span>
-        <span class="keyword">void</span> (*task_tick) (<span class="keyword">struct</span> rq *rq, <span class="keyword">struct</span> task_struct *p);               <span class="comment">/*由周期调度器调用*/</span>由时钟中断调用
-        <span class="keyword">void</span> (*task_new) (<span class="keyword">struct</span> rq *rq, <span class="keyword">struct</span> task_struct *p);            <span class="comment">/*每次建立新进程调用此函数通知调度器*/</span>clone的新进程来处理这个.
-};
-</code></pre><p>RQ队列:ready队列.针对cpu<br>下图的runqueue实际上就是struct rq.runqueue的说法有点老了,下面的图有点不合实际了.<br>rq队列位于linux/kernel/sched.c文件中<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52642995.jpg" alt=""></p>
+<span class="keyword">void</span> (*set_curr_task) (<span class="keyword">struct</span> rq *rq);<span class="comment">//设置当前进程运行状态</span>
+<span class="keyword">void</span> (*task_tick) (<span class="keyword">struct</span> rq *rq, <span class="keyword">struct</span> task_struct *p);               <span class="comment">/*由周期调度器调用*/</span>由时钟中断调用
+<span class="keyword">void</span> (*task_new) (<span class="keyword">struct</span> rq *rq, <span class="keyword">struct</span> task_struct *p);            <span class="comment">/*每次建立新进程调用此函数通知调度器*/</span>clone的新进程来处理这个.
+</code></pre><p>  };</p>
+<p>RQ队列:ready队列.针对cpu<br>下图的runqueue实际上就是struct rq.runqueue的说法有点老了,下面的图有点不合实际了.<br>rq队列位于linux/kernel/sched.c文件中<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/52642995.jpg" alt=""></p>
 <p>RQ队列由哪个数据结构指向呢?由调度类sched_class调用时需要使用.<br>运行队列时针对每一个cpu的,每个cpu有自己的RQ.在RQ中选择下一个进程.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/20275973.jpg" alt=""><br>1)每个cpu的RQ中有两个子队列,一个CFS,一个RT.两个队列是分开的.cpu的调度队列中有两个,CFS与RT.<br>2)current:当前cpu上运行的进程pcb.<br>当两个队列都为空时,转向idle指向的pcb.<br>load记录当前cpu上线程负载累加的权值,每次调度时,旧值放入cpu_load数组中.<br>nr_running:cpu上运行状态线程个数,处于TASK_RUNNING状态.两个队列之和(cfs与rt),对于ready队列之和.<br>clock:cpu上的时钟,与硬件时钟不同,每个时钟中断加1,这个cpu调度的时中断也加1.不完全与硬件时钟相等,schedule调用也会导致cpu上的时钟增加&gt;硬件时钟<br>struct cfs_rq:与sched_class位于同一个文件中.</p>
 <p>调度实体:se<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/96406083.jpg" alt=""></p>
-<p>与task_struct位于同一个文件中<br>1)load根据自己的优先级给出的.<br>on_rq:如果在cfs队列中为1,如果不为running,不在cfs队列中则为0.<br>疑问:cfs_rq队列一定存放为为ready队列的线程么?应为是,因为是rq队列.<br>cfs_rq队列实际上是一个排序表.根据虚拟时间大小(vruntime).改成平衡二叉树,红黑树.最左边的节点,vruntime最小.<br>run_node,将该se挂入红黑树中的节点.run_node结构体中两个run_node指针,指向左节点和右节点.<br>exec_start:切入cpu的时间.将rq队列中的clock赋值于此.<br>sum_exec_runtime:累计在cpu上执行时间,clock与exec_start相减得出,累加.<br>prev_sum_exec_running:以前在cpu上累计的执行时间,直接赋值过来.<br>vruntime:根据时间增量一定的放缩,通过load.优先级高的进程长得慢,优先级低的进程长得快.长得慢的,向左边跑,调度次数可能增加.vruntime的计算?load的计算通过下表.具体怎么计算的呢?以及两个sum的计算.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/35414201.jpg" alt=""></p>
-<p>cfs_rq结构:与sched_class/rq一致位于同一个文件.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/2715314.jpg" alt=""><br>1)load:二叉树节点累加值.<br>min_vruntime:二叉树运行最小的虚拟时间.这里有个挑选<br>rb_root:红黑树上的根节点<br>rb_node:红黑树上的最左边的节点.<br>nr_running:树上多少个节点</p>
+<p>与task_struct位于同一个文件中<br>load根据自己的优先级给出的.<br>on_rq:如果在cfs队列中为1,如果不为running,不在cfs队列中则为0.<br>疑问:cfs_rq队列一定存放为为ready队列的线程么?应为是,因为是rq队列.<br>cfs_rq队列实际上是一个排序表.根据虚拟时间大小(vruntime).改成平衡二叉树,红黑树.最左边的节点,vruntime最小.<br>run_node,将该se挂入红黑树中的节点.run_node结构体中两个run_node指针,指向左节点和右节点.<br>exec_start:切入cpu的时间.将rq队列中的clock赋值于此.<br>sum_exec_runtime:累计在cpu上执行时间,clock与exec_start相减得出,累加.<br>prev_sum_exec_running:以前在cpu上累计的执行时间,直接赋值过来.<br>vruntime:根据时间增量一定的放缩,通过load.优先级高的进程长得慢,优先级低的进程长得快.长得慢的,向左边跑,调度次数可能增加.vruntime的计算?load的计算通过下表.具体怎么计算的呢?以及两个sum的计算.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/35414201.jpg" alt=""></p>
+<p>cfs_rq结构:与sched_class/rq一致位于同一个文件.<br><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/2715314.jpg" alt=""></p>
+<p>1)load:二叉树节点累加值.<br>min_vruntime:二叉树运行最小的虚拟时间.这里有个挑选<br>rb_root:红黑树上的根节点<br>rb_node:红黑树上的最左边的节点.<br>nr_running:树上多少个节点</p>
 <p>2)sched_class–&gt;rq–&gt;cfs_rq–&gt;红黑树<br>se只是红黑树上的节点.</p>
 <p>3)rb_leftmost:挑选</p>
-<h1 id="抢占">抢占</h1><p>抢占:怎样使用schedule<br>schedule:系统调度器.选择下一个可以切换上去的进程.<br>schedule–&gt;pick_next_task函数挑选.<br>     实时,cfs,idle筛选.cfs队列中的clock+1,(这个clock,schedule会加1,时钟中断也会加1).<br>     1)设定need_sched标志调用,会调用schedule:中断结束,优先级高的进程唤醒时,时间复算.时间片用完,设置need_sched标志.<br>          什么时候检查这个标志?返回用户空间,中断返回时会检查该标志..<br>          什么原因设定这个标志呢?应当被抢占,时间片用完,调用scheduler_tick();优先级高的进程唤醒,try_to_wake_up().这两个发生,一个在核心,一个在用户地址空间.<br>     2)自己主动调用schedule.io请求之后,阻塞等待,自己调用schedule.比如信号量,拿不到信号量,阻塞.exit调用中,zombie状态,主动调用schedule,完成切换.<br>用户抢占：内核即将返回用户空间时（中断处理程序(io中断唤醒当前抢占io的进程,时钟中断,这两种发生抢占)/系统调用陷入核心,之后返回用户空间），如果need_sched被设置，则调用schedule()于是发生用户抢占。<br>内核中完成任务,准备出去.</p>
+<h1 id="抢占">抢占</h1><p>抢占:怎样使用schedule<br>schedule:系统调度器.选择下一个可以切换上去的进程.<br>schedule–&gt;pick_next_task函数挑选.<br>     实时,cfs,idle筛选.cfs队列中的clock+1,(这个clock,schedule会加1,时钟中断也会加1).</p>
+<pre><code>1)设定<span class="tag">need_sched</span>标志调用,会调用<span class="rule"><span class="attribute">schedule</span>:<span class="value">中断结束,优先级高的进程唤醒时,时间复算.时间片用完,设置need_sched标志.
+     什么时候检查这个标志?返回用户空间,中断返回时会检查该标志..
+     什么原因设定这个标志呢?应当被抢占,时间片用完,调用<span class="function">scheduler_tick</span>()</span></span>;优先级高的进程唤醒,<span class="tag">try_to_wake_up</span>().这两个发生,一个在核心,一个在用户地址空间.
+
+2)自己主动调用<span class="tag">schedule</span><span class="class">.io</span>请求之后,阻塞等待,自己调用<span class="tag">schedule</span>.比如信号量,拿不到信号量,阻塞<span class="class">.exit</span>调用中,<span class="tag">zombie</span>状态,主动调用<span class="tag">schedule</span>,完成切换.
+</code></pre><p>用户抢占：内核即将返回用户空间时（中断处理程序(io中断唤醒当前抢占io的进程,时钟中断,这两种发生抢占)/系统调用陷入核心,之后返回用户空间），如果need_sched被设置，则调用schedule()于是发生用户抢占。<br>内核中完成任务,准备出去.</p>
 <p>内核抢占：Linux完整支持内核抢占；如果重新调度是安全的（安全=没有持有锁），内核抢占就可能发生。调度前除了检查need_resched外，还要检查preempt_count==0（使用锁加1，释放锁减1）。如果内核被阻塞或者显式调用schedule()时，内核抢占也会发生。总之，内核抢占发生的时机：1.中断处理程序正在执行，且返回内核空间之前；2.内核代码再一次具有可抢占性的时候；3.内核任务显式调用schedule()的时候。4.内核任务阻塞。<br>时钟,设备中断,唤醒也是三种情形,可以在核心/用户空间中进行中断.访问共享数据结构时,不允许抢占,退出时再抢占,延迟抢占.当释放资源时,释放锁代码再次检查preempt_count<br>实现:preempt_count位图分为三部分有一部分与fork有关</p>
 <p>两个相关抢占的字段都在thread_info中</p>
 <h1 id="上下文切换">上下文切换</h1><p>context_switch函数负责处理,从一个进程切换到另外一个进程,由schedule函数调用.<br>进程切换.当前运行进程的地址空间拿掉,切换next进程的地址空间.<br>切换页目录的指针,放入寄存器中.<br>寄存器的上下文切换.保存恢复栈信息和寄存器信息.pc psw sp三个值保存pcb中,将next中的值放入上去.<br>先调用switch_mm切换就是地址空间的切换,后调用switch_to是寄存器上下文的切换.进程切换是这两个切换.</p>
@@ -145,9 +148,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/08/01/调度/" data-id="cidye3i0x000ccgo0r8gt77r6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/08/01/调度/" data-id="cidyfqnm6000g7go0jrlzf0m4" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux内核/">linux内核</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/调度/">调度</a></li></ul>
+
     </footer>
   </div>
   
@@ -164,9 +169,9 @@
     </a>
   
   
-    <a href="/2015/08/01/调度(LENOVO-PC--Lenovo--2015-08-30-19,00,23)/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/08/01/系统调用/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">调度</div>
+      <div class="article-nav-title">系统调用</div>
     </a>
   
 </nav>
@@ -182,7 +187,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -191,7 +196,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux内核/">linux内核</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/进程/">进程</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux内核/">linux内核</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vfs/">vfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/中断/">中断</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统调用/">系统调用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟文件系统/">虚拟文件系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/进程/">进程</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -200,7 +205,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/linux内核/" style="font-size: 10px;">linux内核</a> <a href="/tags/进程/" style="font-size: 10px;">进程</a>
+      <a href="/tags/linux内核/" style="font-size: 20px;">linux内核</a> <a href="/tags/vfs/" style="font-size: 10px;">vfs</a> <a href="/tags/中断/" style="font-size: 10px;">中断</a> <a href="/tags/系统调用/" style="font-size: 10px;">系统调用</a> <a href="/tags/虚拟文件系统/" style="font-size: 10px;">虚拟文件系统</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a> <a href="/tags/进程/" style="font-size: 15px;">进程</a>
     </div>
   </div>
 
@@ -209,7 +214,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">9</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">7</span></li></ul>
     </div>
   </div>
 
@@ -221,15 +226,15 @@
       <ul>
         
           <li>
-            <a href="/2015/08/30/系统调用/">系统调用</a>
+            <a href="/2015/08/02/内存管理/">内存管理</a>
           </li>
         
           <li>
-            <a href="/2015/08/30/虚拟文件系统/">虚拟文件系统</a>
+            <a href="/2015/08/02/进程空间/">进程空间</a>
           </li>
         
           <li>
-            <a href="/2015/08/30/中断/">中断</a>
+            <a href="/2015/08/01/虚拟文件系统/">虚拟文件系统</a>
           </li>
         
           <li>
