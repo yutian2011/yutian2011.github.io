@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/29062073.jpg">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/97439470.jpg">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-8-30/62350371.jpg">
-<meta property="og:updated_time" content="2015-08-30T11:49:08.714Z">
+<meta property="og:updated_time" content="2015-08-30T12:12:45.988Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="中断">
 <meta name="twitter:description" content="中断机制,中断上下文,中断下半部">
@@ -96,7 +96,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>中断机制,中断上下文,中断下半部<br><a id="more"></a></p>
+        <p>中断机制,中断上下文,中断下半部<br><a id="more"></a><br>软中断与软件中断<br>这两个概念网上是乱的.<br>软中断指中断下半部的一种方式.<br>软件中断是指软件模拟的硬件中断.是系统调用和信号的实现方式</p>
 <h1 id="注册中断_中断控制">注册中断 中断控制</h1><p>硬件中断信号–&gt;中断控制器–&gt;cpu–&gt;程序中断,保存–&gt;相应中断处理程序–&gt;中断向量表–&gt;返回时,返回产生中断指令的下一条指令.<br>中断发生在两条指令中断,每个指令最后1到2个时钟周期,检查int线,是否为低电平,是转入中断指令周期,执行两次,第一次,中断上下文保存,压入psw,再压入 程序指针cs eip压入.第二次转入中断处理程序,取出中断号,取出中断处理程序放入pc,最后一条指令ireturn.</p>
 <p>中断值被称为中断请求(IRQ)线,中断控制器的引线.<br>同一中断不允许重入.<br>每个设备跟一个irq,中断与中断索引号一一对应.linux中屏蔽中断索引号,以irq为准.允许不同外设共享同一中断线.</p>
 <p>连接PCI总线上的设备,中断是动态分配的.</p>
@@ -131,7 +131,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/08/01/中断/" data-id="cidyfqnkr00007go0rtvnwcgs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/08/01/中断/" data-id="cidyh1o6h0000qko0pg2j7tsc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux内核/">linux内核</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/中断/">中断</a></li></ul>
@@ -165,7 +165,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">8</span></li></ul>
     </div>
   </div>
 
@@ -192,7 +192,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">7</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">8</span></li></ul>
     </div>
   </div>
 
@@ -202,6 +202,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/08/30/后记/">后记</a>
+          </li>
         
           <li>
             <a href="/2015/08/02/调度/">调度</a>
@@ -217,10 +221,6 @@
         
           <li>
             <a href="/2015/08/01/虚拟文件系统/">虚拟文件系统</a>
-          </li>
-        
-          <li>
-            <a href="/2015/08/01/进程/">进程</a>
           </li>
         
       </ul>
