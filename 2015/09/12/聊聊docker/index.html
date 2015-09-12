@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="雨天 's blog">
 <meta property="og:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-9-12/73652612.jpg">
-<meta property="og:updated_time" content="2015-09-12T02:55:51.576Z">
+<meta property="og:updated_time" content="2015-09-12T03:03:03.124Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊docker">
 <meta name="twitter:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
@@ -94,7 +94,7 @@
 <h2 id="cgroup">cgroup</h2><p><a href="http://coolshell.cn/articles/17049.html" target="_blank" rel="external">cgroup</a></p>
 <h2 id="AUFS">AUFS</h2><p>AUFS就是用来实现镜像的.<br><a href="http://coolshell.cn/articles/17061.html" target="_blank" rel="external">AUFS</a></p>
 <h1 id="chroot_namespace_cgroup之间的关系">chroot namespace cgroup之间的关系</h1><p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-9-12/73652612.jpg" alt=""></p>
-<p>其实这个是我主要想说明的问题,因为网上没人说的清楚,嗯,至少我没看到……..<br>打比方说,拿上面这个图片.个人理解:<br>这三者构成了监狱,控制进程的行为.<br>namespace构成监狱的四面墙.通过6个namespace可以让进程之间相互看不到.监狱中的各牢房的人看不到感知不到对方的存在.但是,有人想越狱,现在呢,可以挖地道实现互通.不同的进程可以通过打开同一个文件实现互通.(个人测试过,主要是clone时NS这个参数)<br>chroot该出场了.chroot限制了囚犯的活动范围.choot相当于监狱的底部,钢筋混泥土构成.不好意思,此路不通.这时囚犯没有办法,只能尝试是否能向上爬出去.<br>cgroup的功能就相当于牢房的天花板(虽然这个天花板可能会被捅破),限制进程的资源使用,cpu,内存,磁盘io.<br>这三者构成牢房,将进程关起来.</p>
+<p>其实这个是我主要想说明的问题,因为网上没人说的清楚,嗯,至少我没看到……..<br>这三个是不同的东西.三种不同的隔离行为.<br>打比方说,拿上面这个图片.个人理解:<br>这三者构成了监狱,控制进程的行为.<br>namespace构成监狱的四面墙.通过6个namespace可以让进程之间相互看不到.监狱中的各牢房的人看不到感知不到对方的存在.但是,有人想越狱,现在呢,可以挖地道实现互通.不同的进程可以通过打开同一个文件实现互通.(个人测试过,主要是clone时NS这个参数)<br>chroot该出场了.chroot限制了囚犯的活动范围.choot相当于监狱的底部,钢筋混泥土构成.不好意思,此路不通.这时囚犯没有办法,只能尝试是否能向上爬出去.<br>cgroup的功能就相当于牢房的天花板(虽然这个天花板可能会被捅破),限制进程的资源使用,cpu,内存,磁盘io.<br>这三者构成牢房,将进程关起来.</p>
 <h1 id="docker后续的一些问题">docker后续的一些问题</h1><p>服务器发现,网络管理,集群调度等问题.<br>之前为什么说docker是一个生态系统,原因就在于,需要配合很多工具的使用.具体可以查看下面资料</p>
 <h1 id="docker入门资料">docker入门资料</h1><p><a href="http://dockerpool.com/static/books/docker_practice/underly/network.html" target="_blank" rel="external">docker技术入门与实战</a><br><a href="http://www.dockone.io/article/233" target="_blank" rel="external">docker入门实战</a></p>
 <h1 id="最后吐槽下docker的安全">最后吐槽下docker的安全</h1><p>问题来自于两个二货基友.<br>前几天牛客网推出了终端,实际上就是用docker实现的.之前看到叶神在群里说,然后告诉同学了.然后同学和他寝室基友写了一个fork炸弹.直接导致其他终端也崩掉.(希望叶神不要打死我们…….)<br>后来讨论docker之前的隔离安全性.测试了几次(包括在牛客上和本地,本地主机直接崩掉),都一样,其他运行的容器直接死掉.通过这个自己也想清楚了docker的实质,docker运行的进程没有想象中那么安全,就是一个宿主机上的一个特殊的进程而已.占用和共享宿主机的资源.例如,进程数.<br>尝试过怎样解决,对于docker我觉得没法解决,就是因为隔离度低了,通过用户设定可以限制进程数,但首先docker都是 使用root权限运行,而且,即使限制了,也是限制全局的.限制cpu之类的也尝试过,但耗费的资源是进程数,限制cpu后,只是让崩掉的时间延缓,当时杀进程killall命令运行了4遍才全部杀完.感觉docker这里无解.对比下,kvm,想了下,对于一台kvm,里面状态linux,里面死掉了,但是可以通过控制cgroup限制cpu,控制不影响其他的kvm.<br>京东有篇文章说的,docker适用于私有云.虽然Docker的安全性和隔离性不是太好，但这并不是私有云的主要矛盾。</p>
@@ -102,7 +102,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/12/聊聊docker/" data-id="ciegh1tig000sjco0wrfag88q" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/12/聊聊docker/" data-id="cieghkfm4000sgko0n99vb2ap" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/虚拟化/">虚拟化</a></li></ul>
