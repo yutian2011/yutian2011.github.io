@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>聊聊docker | 雨天 &#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊docker">
+<meta property="og:url" content="http://yoursite.com/2015/09/12/聊聊docker/index.html">
+<meta property="og:site_name" content="雨天 's blog">
+<meta property="og:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+<meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-9-12/73652612.jpg">
+<meta property="og:updated_time" content="2015-09-12T02:55:51.576Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊聊docker">
+<meta name="twitter:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+  
+    <link rel="alternative" href="/atom.xml" title="雨天 &#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">雨天 &#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-聊聊docker" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/12/聊聊docker/" class="article-date">
+  <time datetime="2015-09-12T01:33:41.000Z" itemprop="datePublished">2015-09-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      聊聊docker
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.<br>顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……<br><a id="more"></a></p>
+<h1 id="docker是什么">docker是什么</h1><p>docker很火.火的有点不想话.任何人都在聊,任何一家公司都想/在使用它.docker不只是一个容器,虚拟化,而是一个生态系统,使用了docker就要面对docker带来的问题和使用其解决方案.这也就是为什么说是一个生态系统.<br>docker的应用.看过美团和京东的一些文章的说明.我觉得docker最大的贡献是解决了开发和运维的一个矛盾.没有做过运维的人不知道这个矛盾有多大.有工作经历,产品上线的人都应该有所了解.docker的隔离机制可以简化了这个矛盾,在运维和开发之间建立一堵墙,开发人员关心容器内的事情,运维人员负责容器外的事情.<br>之前看到京东的文章说在618时用了上万个docker,不知道京东这里怎么用的.很好奇.</p>
+<h1 id="docker几种基础技术">docker几种基础技术</h1><h2 id="choot">choot</h2><p>chroot，即 change root directory (更改 root 目录),实质是更改task_struct中的fs_struct中的root值.<br>root默认是/<br>作用,将用户限制在某个目录下,jail,看不到全局的文件信息.增加安全,限制隔离.</p>
+<h2 id="namespace">namespace</h2><p>实质是task_struct中的nsproxy结构体.<br><a href="http://coolshell.cn/articles/17010.html" target="_blank" rel="external">namespace上</a><br><a href="http://coolshell.cn/articles/17029.html" target="_blank" rel="external">namespace下</a></p>
+<h2 id="cgroup">cgroup</h2><p><a href="http://coolshell.cn/articles/17049.html" target="_blank" rel="external">cgroup</a></p>
+<h2 id="AUFS">AUFS</h2><p>AUFS就是用来实现镜像的.<br><a href="http://coolshell.cn/articles/17061.html" target="_blank" rel="external">AUFS</a></p>
+<h1 id="chroot_namespace_cgroup之间的关系">chroot namespace cgroup之间的关系</h1><p><img src="http://7xlglz.com1.z0.glb.clouddn.com/15-9-12/73652612.jpg" alt=""></p>
+<p>其实这个是我主要想说明的问题,因为网上没人说的清楚,嗯,至少我没看到……..<br>打比方说,拿上面这个图片.个人理解:<br>这三者构成了监狱,控制进程的行为.<br>namespace构成监狱的四面墙.通过6个namespace可以让进程之间相互看不到.监狱中的各牢房的人看不到感知不到对方的存在.但是,有人想越狱,现在呢,可以挖地道实现互通.不同的进程可以通过打开同一个文件实现互通.(个人测试过,主要是clone时NS这个参数)<br>chroot该出场了.chroot限制了囚犯的活动范围.choot相当于监狱的底部,钢筋混泥土构成.不好意思,此路不通.这时囚犯没有办法,只能尝试是否能向上爬出去.<br>cgroup的功能就相当于牢房的天花板(虽然这个天花板可能会被捅破),限制进程的资源使用,cpu,内存,磁盘io.<br>这三者构成牢房,将进程关起来.</p>
+<h1 id="docker后续的一些问题">docker后续的一些问题</h1><p>服务器发现,网络管理,集群调度等问题.<br>之前为什么说docker是一个生态系统,原因就在于,需要配合很多工具的使用.具体可以查看下面资料</p>
+<h1 id="docker入门资料">docker入门资料</h1><p><a href="http://dockerpool.com/static/books/docker_practice/underly/network.html" target="_blank" rel="external">docker技术入门与实战</a><br><a href="http://www.dockone.io/article/233" target="_blank" rel="external">docker入门实战</a></p>
+<h1 id="最后吐槽下docker的安全">最后吐槽下docker的安全</h1><p>问题来自于两个二货基友.<br>前几天牛客网推出了终端,实际上就是用docker实现的.之前看到叶神在群里说,然后告诉同学了.然后同学和他寝室基友写了一个fork炸弹.直接导致其他终端也崩掉.(希望叶神不要打死我们…….)<br>后来讨论docker之前的隔离安全性.测试了几次(包括在牛客上和本地,本地主机直接崩掉),都一样,其他运行的容器直接死掉.通过这个自己也想清楚了docker的实质,docker运行的进程没有想象中那么安全,就是一个宿主机上的一个特殊的进程而已.占用和共享宿主机的资源.例如,进程数.<br>尝试过怎样解决,对于docker我觉得没法解决,就是因为隔离度低了,通过用户设定可以限制进程数,但首先docker都是 使用root权限运行,而且,即使限制了,也是限制全局的.限制cpu之类的也尝试过,但耗费的资源是进程数,限制cpu后,只是让崩掉的时间延缓,当时杀进程killall命令运行了4遍才全部杀完.感觉docker这里无解.对比下,kvm,想了下,对于一台kvm,里面状态linux,里面死掉了,但是可以通过控制cgroup限制cpu,控制不影响其他的kvm.<br>京东有篇文章说的,docker适用于私有云.虽然Docker的安全性和隔离性不是太好，但这并不是私有云的主要矛盾。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/09/12/聊聊docker/" data-id="ciegh1tig000sjco0wrfag88q" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/虚拟化/">虚拟化</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/08/30/后记/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">后记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux内核/">linux内核</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vfs/">vfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/中断/">中断</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统调用/">系统调用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟化/">虚拟化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟文件系统/">虚拟文件系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/进程/">进程</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/linux内核/" style="font-size: 20px;">linux内核</a> <a href="/tags/vfs/" style="font-size: 10px;">vfs</a> <a href="/tags/中断/" style="font-size: 10px;">中断</a> <a href="/tags/系统调用/" style="font-size: 10px;">系统调用</a> <a href="/tags/虚拟化/" style="font-size: 10px;">虚拟化</a> <a href="/tags/虚拟文件系统/" style="font-size: 10px;">虚拟文件系统</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a> <a href="/tags/进程/" style="font-size: 15px;">进程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/09/12/聊聊docker/">聊聊docker</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/30/后记/">后记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/调度/">调度</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/内存管理/">内存管理</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/进程空间/">进程空间</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 conanpzh<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
