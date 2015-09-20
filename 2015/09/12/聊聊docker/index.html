@@ -5,17 +5,17 @@
   
   <title>聊聊docker | 雨天 &#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+  <meta name="description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…">
 <meta property="og:type" content="article">
 <meta property="og:title" content="聊聊docker">
 <meta property="og:url" content="http://yoursite.com/2015/09/12/聊聊docker/index.html">
 <meta property="og:site_name" content="雨天 's blog">
-<meta property="og:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+<meta property="og:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…">
 <meta property="og:image" content="http://7xlglz.com1.z0.glb.clouddn.com/15-9-12/73652612.jpg">
-<meta property="og:updated_time" content="2015-09-12T03:03:03.124Z">
+<meta property="og:updated_time" content="2015-09-20T08:03:56.934Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊docker">
-<meta name="twitter:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……">
+<meta name="twitter:description" content="docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…">
   
     <link rel="alternative" href="/atom.xml" title="雨天 &#39;s blog" type="application/atom+xml">
   
@@ -87,7 +87,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.<br>顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…只有去霸面了……<br><a id="more"></a></p>
+        <p>docker技术的基本原理,以及聊聊chroot namespace cgroup之间的关系.<br>顺便吐槽句美团的简历系统,地点莫名其妙的错了,泪奔…<br><a id="more"></a></p>
 <h1 id="docker是什么">docker是什么</h1><p>docker很火.火的有点不想话.任何人都在聊,任何一家公司都想/在使用它.docker不只是一个容器,虚拟化,而是一个生态系统,使用了docker就要面对docker带来的问题和使用其解决方案.这也就是为什么说是一个生态系统.<br>docker的应用.看过美团和京东的一些文章的说明.我觉得docker最大的贡献是解决了开发和运维的一个矛盾.没有做过运维的人不知道这个矛盾有多大.有工作经历,产品上线的人都应该有所了解.docker的隔离机制可以简化了这个矛盾,在运维和开发之间建立一堵墙,开发人员关心容器内的事情,运维人员负责容器外的事情.<br>之前看到京东的文章说在618时用了上万个docker,不知道京东这里怎么用的.很好奇.</p>
 <h1 id="docker几种基础技术">docker几种基础技术</h1><h2 id="choot">choot</h2><p>chroot，即 change root directory (更改 root 目录),实质是更改task_struct中的fs_struct中的root值.<br>root默认是/<br>作用,将用户限制在某个目录下,jail,看不到全局的文件信息.增加安全,限制隔离.</p>
 <h2 id="namespace">namespace</h2><p>实质是task_struct中的nsproxy结构体.<br><a href="http://coolshell.cn/articles/17010.html" target="_blank" rel="external">namespace上</a><br><a href="http://coolshell.cn/articles/17029.html" target="_blank" rel="external">namespace下</a></p>
@@ -102,7 +102,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/12/聊聊docker/" data-id="cieghkfm4000sgko0n99vb2ap" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/12/聊聊docker/" data-id="cies7wxhy000smco0ux59zjtp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/虚拟化/">虚拟化</a></li></ul>
