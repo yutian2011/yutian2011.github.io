@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>python核心编程(第二版)--读书笔记 | 雨天 &#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="python核心编程 读书笔记 for training">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python核心编程(第二版)--读书笔记">
+<meta property="og:url" content="http://yoursite.com/2015/11/25/python读书笔记/index.html">
+<meta property="og:site_name" content="雨天 's blog">
+<meta property="og:description" content="python核心编程 读书笔记 for training">
+<meta property="og:updated_time" content="2015-11-25T12:30:14.299Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python核心编程(第二版)--读书笔记">
+<meta name="twitter:description" content="python核心编程 读书笔记 for training">
+  
+    <link rel="alternative" href="/atom.xml" title="雨天 &#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">雨天 &#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-python读书笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/11/25/python读书笔记/" class="article-date">
+  <time datetime="2015-11-25T09:24:18.000Z" itemprop="datePublished">2015-11-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/python-读书笔记/">python 读书笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      python核心编程(第二版)--读书笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>python核心编程 读书笔记 for training<br><a id="more"></a></p>
+<pre><code>• <span class="atom">python</span>中对象通过引用传递的.在赋值时,不管对象时新创建的还是一个已经存在的,都是讲该对象的额引用(而不是值)赋值给变量.
+
+• 列表解析:表示可以在一行中使用一个<span class="atom">for</span>循环将所有值放到一个列表当中.
+[<span class="atom">x</span>**<span class="number">2</span> <span class="atom">for</span> <span class="atom">x</span> <span class="atom">in</span> <span class="atom">range</span>(<span class="number">4</span>) ]
+
+• <span class="atom">python</span>中的变量交换
+<span class="atom">x</span>, <span class="atom">y</span>=<span class="atom">y</span>, <span class="atom">x</span>
+
+• 最高级别的<span class="atom">python</span>--没有缩进的代码航--在模块被导入时就会执行.
+
+• 导入模块的时候,模块(文件名)不能数字开头,否则有问题.
+
+• <span class="atom">python</span>在运行时检车该模块是被导入还是被直接执行?<span class="name">__name__</span>系统变量
+
+• 引用计数:
+<span class="number">1</span>)增加: 对象被创建并(将其引用)赋值给变量时,该对象的引用计数被设置为<span class="number">1</span>;当同一个对象(引用)又被赋值给其他变量时,或作为参数传递给函数 方法或类实例时 ,或称作别名,则该对象的引用计数自动加<span class="number">1.</span>
+<span class="number">2</span>)减少: 应用离开作用的范围时,通常是函数运行结束时,所有局部变量被自动销毁,对象的引用计数随之减少;当变量被赋值给另外一个对象时,原对象的引用计数也会减<span class="number">1</span>;
+<span class="atom">foo</span> = <span class="string">'xyz'</span>
+<span class="atom">bar</span> = <span class="atom">foo</span>
+<span class="atom">foo</span> = <span class="number">123</span>
+对象的别名被显示销毁:<span class="atom">del</span> <span class="atom">y</span>;对象被从一个窗口对象中移除.<span class="atom">myList</span>.<span class="atom">remove</span>(<span class="atom">x</span>);窗口对象本身被销毁:<span class="atom">del</span> <span class="atom">myList</span>
+
+• 使用局部变量替换模块变量:<span class="atom">os</span>.<span class="atom">linesep</span>这样的名字需要解释器做两次查询:<span class="number">1</span>)<span class="atom">chazhaoos</span>已确认是一个模块 <span class="number">2</span>)在模块中查找<span class="atom">linesep</span>变量
+<span class="name">Import</span> <span class="atom">os</span>
+<span class="name">Ls</span> = <span class="atom">os</span>.<span class="atom">linesep</span>
+• 每个对象都有布尔值
+下列对象的布尔值是<span class="name">False</span>
+<span class="name">None</span>
+<span class="name">False</span>
+所有值为<span class="number">0</span>的数
+<span class="number">0</span>    <span class="number">0.0</span>    <span class="number">0</span><span class="name">L</span>   <span class="number">0.0</span>+<span class="number">0.0</span><span class="atom">j</span>  
+<span class="string">""</span>空字符串 []空列表 ()空元组  {}空字典
+
+• 内部类型
+<span class="number">1</span>)代码对象:
+    编译过的<span class="atom">python</span>源代码片段,是可执行对象.通过内奸函数<span class="atom">compile</span>()可以得到代码对象.代码对象可以被<span class="atom">exec</span>命令或<span class="atom">eval</span>内建函数来自行.代码对象本身不包含任何执行环境信息.用户自定义函数的核心,在被执行时动态获得上下文.代码对象是函数的一个属性.
+<span class="number">2</span>)帧对象
+    <span class="atom">python</span>执行栈帧.帧对象包含<span class="atom">python</span>解释器在运行时所需要知道的所有信息,属性包括上一帧的连接,正在被执行的代码对象,本地及全局名称空间字典及当前指令.每次函数调用产生一个新的帧,每一个帧对象都会相应的创建一个<span class="name">C</span>栈帧.用到帧对象的一个地方是跟踪记录对象
+<span class="number">3</span>)跟踪记录对象
+    当代码出错时,<span class="atom">python</span>引发异常,如果异常违背捕获和处理,解释器就会退出脚本运行.当异常发生时,一个包含针对异常的栈跟踪信息的跟踪记录对象被创建.如果一个异常有自己的异常处理程序,处理程序可以访问这个跟踪记录对象.
+<span class="number">4</span>)切片对象:
+    使用切片语法时创建切片对象.
+<span class="number">5</span>)省略对象
+    省略对象用语扩展的切片语法中,起记号作用.这个对象在切片语法中表示省略号
+<span class="number">6</span>)<span class="name">XRange</span>对象
+    内减函数<span class="atom">xrange</span>()会生成一个<span class="name">Xrange</span>对象,<span class="atom">xrange</span>()时内建函数
+
+• 对象比较
+对象身份比较  <span class="atom">is</span>  <span class="atom">is</span> <span class="atom">not</span>  <span class="atom">id</span>
+对象值比较
+==比较的对象指向的值.
+但是对于整形对象,和字符串对象时不可变对象,<span class="atom">python</span>很搞笑的缓存,实际没有创建新对象.
+<span class="atom">python</span>缓存的整形范围是(-<span class="number">1</span>,<span class="number">256</span>):<span class="atom">python</span> <span class="number">2.7</span><span class="number">.10</span>
+
+• <span class="atom">type</span>返回值仍是对象,然后再调用<span class="atom">type</span>()
+
+• <span class="name">Str</span> <span class="atom">repr</span> <span class="string">``</span> :<span class="atom">str</span>函数得到的字符串可读性好 ; <span class="atom">repr</span>函数获得的字符串通常可以用来重新获得该对象,通常<span class="atom">obj</span>==<span class="atom">eval</span>(<span class="atom">repr</span>(<span class="atom">obj</span>)) 但不是所有; <span class="string">``</span>和<span class="atom">repr</span>相等.<span class="atom">repr</span>输出对<span class="atom">python</span>比较友好,<span class="atom">str</span>输出对用户比较友好
+
+• 有了<span class="atom">repr</span>还需哟啊<span class="string">``</span> ? 有些场合函数比操作符更适合.<span class="atom">python</span>社区不鼓励使用<span class="string">``</span>操作符
+
+• <span class="atom">python</span>不支持函数,方法重载 ?  <span class="name">Why</span>?怎么解决的?
+
+• <span class="atom">isinstance</span>判断值是否某些类型的实例.
+
+• 更新模型:对象创建成功后,它的值是否可以进行更新? <span class="name">String</span>,数字(不止<span class="atom">int</span>型,其他数字类型也一样,不清楚问什么),元组都是不可更新的.列表/字典可更新的.
+
+• <span class="atom">coerce</span>从技术上将是一个数据类型转换函数,为程序员提供了不依赖<span class="atom">python</span>解释器,而是自定义两个数值类型转换的方法.返回一个包含类型转换完毕的两个数值元素的元组.
+
+• <span class="atom">divmod</span>函数把出发和区域运算结合起来,返回一个包含商和余数的元组.
+
+• <span class="atom">round</span>对于浮点型进行四舍五入运算.有一个可选的小数位参数
+
+• <span class="name">Ord</span> <span class="atom">chr</span> 字符与数字转换,<span class="atom">ascii</span>字符
+
+• +可以将两个字符串或者列表连接在一起,但效率不是最高的.对于列表,<span class="atom">extend</span>方法.
+
+• [<span class="name">None</span>].<span class="atom">extend</span>()返回<span class="name">None</span>,<span class="name">None</span>既不是序列类型也不是可迭代类型.
+
+• <span class="name">List</span>,<span class="atom">tuple</span>适用列表和元组互换,不适合<span class="atom">string</span>类型
+
+• 可迭代对象和序列类型
+截取一段网上解释
+可迭代对象：对象里面包含<span class="name">__iter</span>()<span class="name">__</span>方法的实现，对象的<span class="atom">iter</span>函数经调用之后会返回一个迭代器，里面包含具体数据获取的实现。
+迭代器：包含有<span class="atom">next</span>方法的实现，在正确范围内返回期待的数据以及超出范围后能够抛出<span class="name">StopIteration</span>的错误停止迭代
+
+• <span class="atom">enumerate</span>函数与<span class="atom">zip</span>函数:<span class="atom">zip</span>,多个字符串/序列每次抽取其中一个,长度为参数中最短一个.
+<span class="atom">zip</span>返回列表,列表元素为元组,每个元组两个或多个元组.
+
+• <span class="atom">ord</span>除了与<span class="atom">chr</span>对应,还与<span class="atom">unicode</span>对应<span class="atom">unichr</span>函数
+
+• <span class="string">':'</span>.<span class="atom">join</span>()用法.
+引申:字符串连接方式:
+    +
+    格式化字符串
+    组成<span class="atom">list</span>再,<span class="atom">join</span>.<span class="atom">list</span>元素只能是<span class="atom">string</span>类型.
+    两个字符串放在一起中间有或没有空白(但不能是两个字符串变量)
+
+• <span class="atom">unicode</span>和中文
+参考: <span class="atom">http</span>://<span class="atom">wklken</span>.<span class="atom">me</span>/<span class="atom">posts</span>/<span class="number">2013</span>/<span class="number">08</span>/<span class="number">31</span>/<span class="atom">python</span>-<span class="atom">extra</span>-<span class="atom">coding</span>-<span class="atom">intro</span>.<span class="atom">html</span> 
+
+• 将<span class="atom">unicode</span>应用到实际应用中
+    ○ 程序中出现字符串时加前缀<span class="atom">u</span>
+    ○ 使用<span class="atom">unicode</span>代替<span class="atom">str</span>函数
+    ○ 不使用过时的<span class="atom">string</span>模块
+    ○ 写入时才使用<span class="atom">encode</span>,读回时使用<span class="atom">decode</span>
+
+• 虽然元组对象本身不可变,但不意味着元组包含的可变对象也不可变了
+<span class="name">T</span>=([<span class="string">'xyz'</span>,<span class="number">124</span>],<span class="number">23</span>,<span class="number">56</span>)
+<span class="name">T</span>[<span class="number">0</span>][<span class="number">1</span>]=<span class="string">"F"</span>
+
+• 单元素元组
+<span class="name">Type</span>((<span class="string">'xyz'</span>))   &lt;<span class="atom">type</span> <span class="string">'str'</span>&gt;
+由圆括号包裹的一个单一元素首先被称作为分组操作而不是作为元组的分界符.
+(<span class="string">'xyz'</span>,)
+
+• 不可变对象的值是不可变的,以为这通过<span class="atom">hash</span>算法得到的总是一个值,作为字典键值的一个必备条件.列表变量就不行.
+
+• 序列类型对象的的浅拷贝是默认类型拷贝
+<span class="number">1</span>)  完全切片操作
+<span class="number">2</span>) 利用工厂函数
+<span class="number">3</span>) 使用<span class="atom">copy</span>模块的<span class="atom">copy</span>函数
+在进行浅拷贝时,不可变对象显示拷贝,可变对象,拷贝引用.
+
+• 深拷贝
+<span class="name">Import</span> <span class="atom">copy</span>
+<span class="name">Wifey</span>=<span class="atom">copy</span>.<span class="atom">deepcopy</span>(<span class="atom">perosion</span>)
+
+非容器类型(数字,字符串和其他原子类型)没有拷贝一说(内存重新建立对象)
+如果元组变量只包含原子类型,对它的深拷贝不会进行.即拷贝后的<span class="atom">id</span>相同.
+
+• 字典,<span class="atom">dict</span>[<span class="name">XXX</span>]如果<span class="name">XXX</span>不在字典中,会默认添加进去.
+
+• <span class="atom">cmp</span>比较字典,比较顺序
+<span class="number">1.</span>比较字典长度
+<span class="number">2.</span>比较字典的键
+<span class="number">3.</span>比较字典的值
+<span class="number">4.</span>完全匹配,返回<span class="number">0.</span>
+
+• <span class="atom">dict</span>工厂函数
+如果参数可以迭代的,一个序列或序列的迭代器,或是一个支持迭代的对象,那么迭代元素必须成对出现.
+
+• 字典的<span class="atom">get</span>方法与键操作符([])查找:<span class="atom">get</span>允许<span class="name">Wie</span>不存在的键提供默认值.如果不存在,也没有默认值,则返回<span class="name">None</span>
+
+• 字典中的<span class="atom">keys</span>,<span class="atom">items</span>,<span class="atom">values</span>方法的返回值都是列表.
+数据集很大的时候导致很难处理,这也是<span class="atom">iteritems</span>,<span class="atom">iterkeys</span>,<span class="atom">itervalues</span>方法被添加.
+
+• 字典的键必须是可哈希的.像列表字典这样可变类型,不可哈希;所有不可变类型都是可哈希的;值相等的数字表示相同的键,例如整数数字<span class="number">1</span>和浮点型数字<span class="number">1.0</span>的哈希值相同,有相同的键.
+
+• 集合:分为可变集合和不可变集合.
+工厂函数<span class="atom">set</span>和<span class="atom">frozenset</span>
+集合等价与结婚中的元素顺序无关,只与集合元素有关.
+
+• 两个表达式
+<span class="number">1</span>) <span class="name">Smaller</span>=(<span class="atom">x</span>&lt;<span class="atom">y</span> <span class="atom">and</span> [<span class="atom">x</span>] <span class="atom">or</span> [<span class="atom">y</span>] )[<span class="number">0</span>] :<span class="number">2.5</span>以前版本, 现在代替<span class="atom">smaller</span>=<span class="atom">x</span> <span class="atom">if</span> <span class="atom">x</span>&lt;<span class="atom">y</span> <span class="atom">else</span> <span class="atom">y</span>
+<span class="number">2</span>) <span class="name">Dict</span>( [ (<span class="string">'xy'</span>[<span class="atom">i</span>-<span class="number">1</span>],<span class="atom">i</span>) <span class="atom">for</span> <span class="atom">i</span> <span class="atom">in</span> <span class="atom">range</span>(<span class="number">1</span>,<span class="number">3</span>) ] )
+
+• 迭代器类型:迭代器对象有一个<span class="atom">next</span>方法,调用后返回下一个条目,所有条目迭代玩后,迭代器引发一个<span class="name">StopIteration</span>异常告诉程序循环结束.
+
+• <span class="name">Xrange</span>:类似<span class="atom">range</span>,很大范围列表时,<span class="atom">xrange</span>更为合适,因为不会再内存里创建列表的完整拷贝.
+
+• 循环相关和序列相关
+<span class="atom">sorted</span>和<span class="atom">zip</span>返回一个序列(列表)
+<span class="atom">reversed</span>和<span class="atom">enumerate</span>返回迭代器.
+
+• <span class="name">While</span>与<span class="atom">for</span> + <span class="atom">else</span>:通过<span class="atom">break</span>方式退出循环不执行,如果正常结束循环则执行<span class="atom">else</span>内容.
+
+• 迭代器:
+有一个<span class="atom">next</span>方法的对象,而不是通过索引来计数.条目全部取出后,引发<span class="name">StopIteration</span>异常.
+<span class="name">Reversed</span>反序迭代器,<span class="atom">enumerate</span>内建函数返回迭代器.
+<span class="name">Any</span>和<span class="atom">all</span>
+<span class="name">For</span>循环会自动调用迭代器的<span class="atom">next</span>方法以及监视<span class="name">StopIteration</span>异常.<span class="atom">while</span>循环需要自己写<span class="atom">try</span> <span class="atom">catch</span>捕获.
+<span class="name">Dict</span>.<span class="atom">keys</span>():返回<span class="atom">list</span>.字典常用<span class="atom">iterkeys</span> <span class="atom">itervalues</span> <span class="atom">iteritems</span>
+文件:自动调用<span class="atom">readline</span>方法.
+迭代时,不要删除元素,会立即反映到迭代的条目上,<span class="atom">keys</span>可以,因为<span class="atom">keys</span>返回一个独立于字典的额列表.迭代器与实际对象绑定.
+创建迭代器:
+    <span class="atom">iter</span>(<span class="atom">obj</span>):如果是类,实现<span class="name">__iter__</span>()和<span class="atom">next</span>()方法
+    <span class="name">Iter</span>(<span class="atom">func</span>,<span class="atom">sentinel</span>),重复调用<span class="atom">func</span>,知道迭代器的下个值等于<span class="atom">sentinel</span>.
+
+• 列表解析:可以取代<span class="atom">map</span>,以及<span class="atom">lamba</span>函数,效率更高.
+[<span class="atom">expr</span> <span class="atom">for</span> <span class="atom">iter_var</span> <span class="atom">in</span> <span class="atom">iterable</span> <span class="atom">if</span> <span class="atom">cond_expr</span>]
+
+• 生成器表达式:特定函数,允许返回一个值,然后暂停代码执行,稍后恢复.列表解析器的扩展.
+(<span class="atom">expr</span> <span class="atom">for</span> <span class="atom">iter_var</span> <span class="atom">in</span> <span class="atom">iterable</span> <span class="atom">if</span> <span class="atom">cond_expr</span>)
+列表解析器不足的必要生成所有数据,用于创建整个列表.可能对有大量数据的迭代器有负面效应.
+生成器表达式,返回一个生成器,计算出一个条目后,把条目生成(<span class="atom">yeild</span>)出来,生成器使用了延迟计算,在内存上更有效.
+
+• <span class="name">Yeild</span>:?
+
+• <span class="name">Open</span>:以<span class="atom">w</span>写打开时,文件若存在,则首先清空再创建.<span class="atom">open</span>与<span class="atom">file</span>函数具有相同功能.
+
+• 通用换行符支持(<span class="name">UNS</span>):文件以<span class="atom">rU</span>方式打开时,行分隔符被替换为换行符<span class="name">NEWLINE</span>(\<span class="atom">n</span>)
+
+• <span class="name">Os</span>模块属性
+<span class="name">Linesep</span>:文件中分隔行字符串
+<span class="name">Sep</span>:分割文件路径名字符串
+<span class="name">Pathsep</span>:文件路径的字符串
+<span class="name">Curdir</span>:当前工作目录字符串
+<span class="name">Pathdir</span>:当前父目录字符串
+
+• <span class="name">Readline</span> <span class="atom">readlines</span>:读取的内容包含换行符.<span class="atom">print</span>打印时注意添加 , 
+
+• <span class="name">File</span>.<span class="atom">xreadlines</span>:用于可迭代的<span class="atom">readlines</span>的高效方法
+
+• <span class="name">Os</span>模块负责进程,进程运行环境,处理大部分文件系统操作.
+<span class="atom">os</span>.<span class="atom">path</span>模块完成一些真多路径名操作.
+
+• <span class="name">Pickle</span>模块:转换并存储<span class="atom">python</span>对象,通过网络发送,然后再重新把数据恢复对象格式.并没有永久存储功能.
+<span class="name">Shelve</span>模块,提供对象序列化和云存储转换以及类似字典和文件的对象,可以完成对象的永久性存储.使用<span class="atom">anydbm</span>模块寻找合适的<span class="name">DBM</span>模块,然后使用<span class="atom">cPickle</span>完成转换过程.
+
+• <span class="name">Try</span> <span class="atom">except</span> <span class="atom">else</span> <span class="atom">finally</span>:<span class="atom">else</span>在没有任何异常退出时才执行.<span class="atom">finally</span>无论异常发生与否都会被执行.
+<span class="name">Try</span> <span class="atom">finally</span>:产生异常,直接跳转<span class="atom">finally</span>,执行完<span class="atom">finally</span>再向上一层引发异常.
+
+• <span class="name">Try</span>-<span class="atom">except</span>典型用法
+<span class="name">Try</span>:
+<span class="atom">except</span> (<span class="name">KeyboardInterrupt</span>, <span class="name">SystemExit</span>):
+    <span class="atom">raise</span>
+<span class="name">Except</span> <span class="name">Exception</span>:
+#<span class="atom">handle</span> <span class="atom">real</span> <span class="atom">errors</span>
+
+• <span class="name">With</span>:保证共享的资源的唯一分配,并在任务结束时释放,例如文件,县城资源,同步,数据库连接.
+支持<span class="atom">with</span>列表:
+    <span class="name">File</span>
+    <span class="name">Decimal</span>.<span class="name">Context</span>
+    <span class="name">Thread</span>.<span class="name">LockType</span>
+    <span class="name">Threading</span>.<span class="name">Lock</span>
+    <span class="name">Threading</span>.<span class="name">Rlock</span>
+    <span class="name">Threading</span>.<span class="name">Condition</span>
+    <span class="name">Threading</span>.<span class="name">Semaphore</span>
+    <span class="name">Threading</span>.<span class="name">BoundedSemaphore</span>
+上下文管理协议:
+    上下文表达式:<span class="name">__contest__</span>()
+        上下文管理器提供一个上下文对象
+    上下文对象:<span class="atom">with</span>语句块
+        一旦获得上下文对象,调用<span class="name">__enter__</span>方法.完整<span class="atom">with</span>语句块执行前所有准备工作.
+        当<span class="atom">with</span>语句块执行结束时,无论是否异常,都会调用<span class="name">__exit__</span>方法,三个参数异常时:类型,值(异常实例)和跟踪记录.
+        上下文管理器主要作用于共享资源,<span class="atom">enter</span>和<span class="atom">exit</span>都是需要分配和释放资源工作.
+
+• 断言:测试表达式,如果返回值是假,触发异常.<span class="name">AssertionError</span>异常
+
+• 异常和<span class="atom">sys</span>模块:<span class="atom">sys</span>模块中<span class="atom">exc_info</span>函数.<span class="atom">sys</span>.<span class="atom">exc_info</span>()返回一个<span class="number">3</span>元组,异常类,异常类的实例,跟踪记录对象.
+
+• 函数返回值,返回多个对象时,返回一个元组,可以通过多个变量进行赋值
+<span class="name">X</span>,<span class="atom">y</span>,<span class="atom">z</span>=<span class="atom">bar</span>()//<span class="atom">x</span> <span class="atom">y</span> <span class="atom">z</span>被分别赋值.
+
+• 函数声明与函数定义,<span class="atom">python</span>中视为一体.不存在前向引用问题,除非函数没有定义.
+
+• 装饰器:在函数调用上修饰.函数,接收函数对象,返回函数对象
+@<span class="atom">g</span>
+@<span class="atom">f</span>
+<span class="name">Def</span> <span class="atom">foo</span>():
+    <span class="atom">pass</span>
+与<span class="atom">foo</span>=<span class="atom">g</span>(<span class="atom">f</span>(<span class="atom">foo</span>))相等.
+有参数与无参数的装饰器:
+@<span class="atom">decomaker</span>(<span class="atom">deco_args</span>)
+<span class="name">Def</span> <span class="atom">foo</span>(): <span class="atom">pass</span>
+<span class="name">Decomaker</span>()用<span class="atom">deco_args</span>做了些事,并返回函数对象,该函数对象正是以<span class="atom">foo</span>作为参数的装饰器.
+作用:引入日志,增加计时逻辑检测性能,函数加入事务能力
+
+• 变长参数
+非关键字可边长参数:元组  *<span class="atom">vargs_tuple</span>
+关键字变量参数:字典 **<span class="atom">vargsd</span>
+
+• <span class="name">Global</span>:将全局作用域的变量在局部作用域中使用,而不被覆盖.
+
+• 闭包:在一个内部函数里,对外部作用域的变量进行引用,那么内部函数就被认为是闭包.
+
+• <span class="name">Import</span>语句的模块顺序
+<span class="name">Python</span> 标准库模块
+<span class="name">Python</span>第三方模块
+应用程序自定义模块
+
+• 每个子类最好定义它自己的构造器,不然积累的构造器会被调用.如果子类重写积累的构造器,积累的构造器就不会被自动调用,积累的构造器就必须显示写出来才会被执行.这里说的<span class="atom">init</span>
+
+• 类属性都是静态变量
+
+• 类<span class="name">__dict__</span>属性包含一个字典,类的数据属性组成,访问类属性时,解释器将会搜索字典以得到需要的属性,如果在<span class="name">__dict__</span>中没有找到,将会在积累的字典中进行搜索,采用深度优先的顺序,基类集的搜索是按顺序的,从左到右,按在类定义时,定义父类参数时的顺序.
+
+• <span class="name">__new__</span>和<span class="name">__init__</span>区别:
+<span class="name">__new__</span>:创建对象时调用，会返回当前对象的一个实例
+<span class="name">__init__</span>:创建完对象后调用，对当前对象的一些实例初始化，无返回值
+<span class="number">1</span>、在类中，如果<span class="name">__new__</span>和<span class="name">__init__</span>同时存在，会优先调用<span class="name">__new__</span>
+<span class="number">2</span>、<span class="name">__new__</span>方法会返回所构造的对象，<span class="name">__init__</span>则不会。<span class="name">__init__</span>无返回值。如果<span class="name">__new__</span>返回一个对象的实例，会隐式调用<span class="name">__init__</span>.
+如果<span class="name">__new__</span>不返回一个对象的实例，<span class="name">__init__</span>不会被调用.在对象的实例创建完成后调用。参数被传给类的构造函数。如果基类有<span class="name">__init__</span>方法，子类必须显示调用基类的<span class="name">__init__</span>。
+
+• <span class="atom">del</span>解构器方法:垃圾对象回收机制,靠引用计数,函数直到该实例对象所有引用都被清除掉后才会执行.
+首先调用父类<span class="atom">del</span>.
+调用<span class="atom">del</span> <span class="atom">x</span>,只是减少引用计数,不一定调用<span class="name">__del__</span>
+<span class="name">__del__</span>()未捕获的异常会被忽略.
+
+• 类实例属性:<span class="name">__init__</span>实例创建后第一个被调用的方法.动态建立属性.
+类属性与实例属性:雷属性仅与类相关的数据值,与实例属性不同,雷属性与实例无关.
+类属性可变与不可变类型时,表现的行为完全不一样.
+通过实例访问类属性时,如果不可变,不会变化,如果可变,将会应用修改.
+使用类属性来修改自身,而不是通过实例.
+
+• 类继承时,特殊属性不会被继承过来.例如文档<span class="name">__doc__</span>
+<span class="name">__bases__</span>会将所有继承关系显示出来.
+
+• 多重继承:
+新式类与经典类查找方法不一样.
+通过<span class="name">_mro__</span>属性查看查找顺序.
+经典类使用深度优先算法,新式类继承自<span class="atom">object</span>,新建<span class="atom">mro</span>
+新式类使用算法较复杂,大概广度优先.
+
+• 私有化
+<span class="name">__</span>双下划线:类元素(属性方法)的私有性
+<span class="name">_</span>模块级私有化,属性名前使用一个单下划线字符,防止模块属性用<span class="atom">from</span> <span class="atom">module</span> <span class="atom">import</span> *来加载.
+
+• 全局解释器锁
+对<span class="atom">python</span>虚拟机访问由全局解释器锁(<span class="name">GIL</span>)来控制,保证同一时刻只有一个线程在运行.在多线程环境中<span class="atom">python</span>按一下方式执行
+<span class="number">1.</span>设置<span class="name">GIL</span>
+<span class="number">2.</span>切换到一个线程运行
+<span class="number">3.</span>运行 指定数量的字节码的指令或者线程主动让出控制.
+<span class="number">4.</span>把喜爱能撑设置为睡眠状态
+<span class="number">5.</span>解锁<span class="name">GIL</span>
+<span class="number">6.</span>重复
+<span class="atom">io</span>密集型<span class="atom">python</span>程序比计算密集型程序更能充分利用多线程环境的好处.
+
+• <span class="atom">thread</span>和<span class="atom">threading</span>模块
+避免使用<span class="atom">thread</span>模块
+<span class="name">Thread</span>,模块不支持守护线程,当主线程退出时,所有子线程不论是否还在工作,都会被强行退出.
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/11/25/python读书笔记/" data-id="cihesg3u30000zco0yjs9or11" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/09/12/聊聊docker/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">聊聊docker</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux内核/">linux内核</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python-读书笔记/">python 读书笔记</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux内核/">linux内核</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vfs/">vfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/中断/">中断</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统调用/">系统调用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟化/">虚拟化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟文件系统/">虚拟文件系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/进程/">进程</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/linux内核/" style="font-size: 20px;">linux内核</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/vfs/" style="font-size: 10px;">vfs</a> <a href="/tags/中断/" style="font-size: 10px;">中断</a> <a href="/tags/系统调用/" style="font-size: 10px;">系统调用</a> <a href="/tags/虚拟化/" style="font-size: 10px;">虚拟化</a> <a href="/tags/虚拟文件系统/" style="font-size: 10px;">虚拟文件系统</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a> <a href="/tags/进程/" style="font-size: 15px;">进程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a><span class="archive-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/11/25/python读书笔记/">python核心编程(第二版)--读书笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/12/聊聊docker/">聊聊docker</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/30/后记/">后记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/调度/">调度</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/02/内存管理/">内存管理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 conanpzh<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
